@@ -1,0 +1,19 @@
+{% extends 'financial_pulse/base.html' %}
+
+{% block title %}Company Data | Performance Pulse{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ company_data.company_name }}</h4>
+                        <p class="card-text">Revenue: {{ company_data.revenue }}</p>
+                        <p class="card-text">Profit: {{ company_data.profit }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
