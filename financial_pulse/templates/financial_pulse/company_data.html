@@ -3,17 +3,56 @@
 {% block title %}Company Data | Performance Pulse{% endblock title %}
 
 {% block content %}
-    <div class="container">
-        <div class="row justify-content-center mt-4">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">{{ company_data.company_name }}</h4>
-                        <p class="card-text">Revenue: {{ company_data.revenue }}</p>
-                        <p class="card-text">Profit: {{ company_data.profit }}</p>
+<style>
+    .chart-container {
+        position: relative;
+        width: 100%;
+        padding-bottom: 75%; /* Set the aspect ratio of the chart (e.g., 4:3, 16:9) */
+    }
+    
+    .chart-img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .content {
+        margin-top: 56px; /* Add margin to the top of the content to avoid overlapping with the navbar */
+    }
+</style>
+<div class="container">
+    <div class="row row justify-content-center align-items-center mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="chart-container">
+                        <img src="data:image/png;base64,{{ company_data.line_chart_image_base64 }}" alt="Line Chart" class="chart-img">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="chart-container">
+                        <img src="data:image/png;base64,{{ company_data.bar_chart_image_base64 }}" alt="Bar Chart" class="chart-img">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="chart-container">
+                        <img src="data:image/png;base64,{{ company_data.area_chart_image_base64 }}" alt="Bar Chart" class="chart-img">
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}

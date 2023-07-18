@@ -1,7 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import CompanyForm
-from .alpha_vantage import fetch_financial_data, params, API_BASE_URL
+from .alpha_vantage import fetch_income_statement, fetch_balance_sheet, fetch_news_sentiment, fetch_overview, params, API_BASE_URL
+from matplotlib import pyplot as plt
+import matplotlib.dates as mdates
+from io import BytesIO
+import base64
+import json
+from datetime import datetime
+import numpy as np
 
 
 def home(request):
@@ -14,38 +21,232 @@ def search_company(request):
         if form.is_valid():
             company_name = form.cleaned_data['company_name']
             params['symbol'] = company_name  # Update the symbol parameter
-            financial_data = fetch_financial_data(API_BASE_URL, params)
+            income_statement_data = fetch_income_statement(API_BASE_URL, params)
+            balance_sheet_data = fetch_balance_sheet(API_BASE_URL, params)
+            news_sentiment_data = fetch_news_sentiment(API_BASE_URL, params)
+            overview_data = fetch_overview(API_BASE_URL, params)
+            formatted_news = json.dumps(news_sentiment_data, indent=2)
+            
+            # Check if news and sentiment data is available
+            if news_sentiment_data is not None and 'feed' in news_sentiment_data:
+                news_sentiment = news_sentiment_data['feed']
+                if news_sentiment:
+                    titles = []
+                    links = []
 
-            # Check if financial data is available
-            if financial_data is not None and 'quarterlyReports' in financial_data:
-                annual_reports = financial_data['quarterlyReports']
-                if annual_reports:
+                    for report in news_sentiment:
+                        news_title = report.get('title')
+                        news_link = report.get('url')
+
+                        if news_title:
+                            titles.append(news_title)
+                        if news_link:
+                            links.append(news_link)
+                            
+                    
+            # Check if business overview data is available
+            if overview_data is not None and 'Description' in overview_data and 'Name' in overview_data:
+                description = overview_data['Description']
+                name = overview_data['Name']
+                
+            
+            # Check if balance sheet data is available
+            if balance_sheet_data is not None and 'quarterlyReports' in balance_sheet_data:
+                balance_sheet_reports = balance_sheet_data['quarterlyReports']
+                if balance_sheet_reports:
+                    total_assets_list = []
+                    total_liabilities_list = []
+                    total_shareholder_equity_list = []
+                    
+                    for report in balance_sheet_reports:
+                        total_assets = report.get('totalAssets')
+                        total_liabilities = report.get('totalLiabilities')
+                        shareholder_equity = report.get('totalShareholderEquity')
+                        
+                        if total_assets:
+                            total_assets_list.append(int(total_assets))
+                        if total_liabilities:
+                            total_liabilities_list.append(int(total_liabilities))
+                        if shareholder_equity:
+                            total_shareholder_equity_list.append(int(shareholder_equity))
+                    
+            # Check if income statement data is available
+            if income_statement_data is not None and 'quarterlyReports' in income_statement_data:
+                income_statement_reports = income_statement_data['quarterlyReports']
+                if income_statement_reports:
                     revenue_list = []
                     fiscal_date_list = []
-                    net_Income_list = []
+                    net_income_list = []
                     operating_expenses_list = []
-                    
-                    for report in annual_reports:
+                    gross_profit_list = []
+                    operating_income_list = []
+
+                    for report in income_statement_reports:
                         revenue = report.get('totalRevenue')
                         fiscal_date = report.get('fiscalDateEnding')
-                        net_Income = report.get('netIncomeFromContinuingOperations')
+                        net_income = report.get('netIncomeFromContinuingOperations')
                         operating_expenses = report.get('operatingExpenses')
+                        gross_profit = report.get('grossProfit')
+                        operating_income = report.get('operatingIncome')
+                        total_assets = report.get('totalAssets')
+                        total_liabilities = report.get('totalLiabilities')
+                        shareholder_equity = report.get('totalShareholderEquity')
                         
                         if revenue:
-                            revenue_list.append(revenue)
+                            revenue_list.append(int(revenue))
                             fiscal_date_list.append(fiscal_date)
-                            net_Income_list.append(net_Income)
-                            operating_expenses_list.append(operating_expenses)
-                            print(revenue_list)
-                            # Store the fetched data in the session
+                            net_income_list.append(int(net_income))
+                            operating_expenses_list.append(int(operating_expenses))
+                            gross_profit_list.append(int(gross_profit))
+                            operating_income_list.append(int(operating_income))
+
+                        if total_assets:
+                            total_assets_list.append(int(total_assets))
+                        if total_liabilities:
+                            total_liabilities_list.append(int(total_liabilities))
+                        if shareholder_equity:
+                            total_shareholder_equity_list.append(int(shareholder_equity))
+                        
+                    # Net profit margin
+                    net_profit_margin = [(net_income / revenue) * 100 for net_income, revenue in zip(net_income_list, revenue_list)]
+                    rounded_net_profit_margin = [round(margin, 2) for margin in net_profit_margin]
+                    formatted_net_profit_margin = [f'{margin:.2f}%' for margin in rounded_net_profit_margin]
+                    net_profit_margin_clean = [int(float(value.strip('%'))) for value in formatted_net_profit_margin]
+                    
+                    # Operating profit margin
+                    operating_profit_margin = [(operating_income / revenue) * 100 for operating_income, revenue in zip(operating_expenses_list, revenue_list)]
+                    rounded_operating_margin = [round(margin, 2) for margin in operating_profit_margin]
+                    formatted_operating_profit_margin = [f'{margin:.2f}%' for margin in rounded_operating_margin]
+                    operating_profit_margin_clean = [int(float(value.strip('%'))) for value in formatted_operating_profit_margin]
+
+                    # Gross profit margin
+                    gross_profit_margin = [(gross_profit / revenue) * 100 for gross_profit, revenue in zip(gross_profit_list, revenue_list)]
+                    rounded_profit_margin = [round(margin, 2) for margin in gross_profit_margin]
+                    formatted_gross_profit_margin = [f'{margin:.2f}%' for margin in rounded_profit_margin]
+                    gross_profit_margin_clean = [int(float(value.strip('%'))) for value in formatted_gross_profit_margin]
+                    
+                    # Reverse lists' data
+                    revenue_final = revenue_list[::-1]
+                    net_income_final = net_income_list[::-1]
+                    operating_expenses_final = operating_income_list[::-1]
+                    gross_profit_margin_final = gross_profit_margin_clean[::-1]
+                    operating_profit_margin_final = operating_profit_margin_clean[::-1]
+                    net_profit_margin_final = net_profit_margin_clean[::-1]
+                    total_assets_final = total_assets_list[::-1]
+                    total_liabilities_final = total_liabilities_list[::-1]
+                    total_shareholder_equity_final = total_shareholder_equity_list[::-1]
+                    
+                    # Format dates for x axis
+                    fiscal_date_list_datetime = [datetime.strptime(date, '%Y-%m-%d').date() for date in fiscal_date_list]
+                    fiscal_date_final = [str(date) for date in fiscal_date_list_datetime[::-1]]
+                    x_ticks = np.array(fiscal_date_final, dtype='datetime64')
+                    bar_x_ticks = [datetime.strptime(date, '%Y-%m-%d').strftime('%Y-%m') for date in fiscal_date_final]
+
+                    # Clear plots
+                    plt.clf()                   
+
+                    # Creating line chart
+                    plt.plot(x_ticks, revenue_final, color='#FF8888', label='Revenue', marker='o', linewidth=1)
+                    plt.plot(x_ticks, net_income_final, color='#B57EDC', label='Net Income', marker='o', linewidth=1)
+                    plt.plot(x_ticks, operating_expenses_final, color='#A9A9A9', label='Expenses', marker='o', linewidth=1)
+                    
+                    # Plot info and style
+                    plt.style.use('_mpl-gallery')  
+                    plt.xlabel('Fiscal Date')
+                    plt.ylabel('Amount (USD)')
+                    plt.title('Financial Metrics over Time')
+                    plt.tight_layout()
+                    plt.legend()
+                    
+                    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+                    plt.gca().xaxis.set_major_locator(mdates.YearLocator())
+                    
+                    # Convert the plot to an image
+                    buffer = BytesIO()
+                    plt.savefig(buffer, format='png')
+                    buffer.seek(0)
+                    line_chart_image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+                    buffer.close()   
+                    
+                    # Clear plots for the next chart
+                    plt.clf()
+                    
+                    # Create an array of indices
+                    x_indices = np.arange(len(bar_x_ticks))
+
+                    # Set the width of each bar
+                    bar_width = 0.25
+                    
+                    # Adjust the x positions for each bar
+                    x_ticks_gross = x_indices - bar_width
+                    x_ticks_operating = x_indices
+                    x_ticks_net = x_indices + bar_width
+                    
+                    # Rotating x values
+                    plt.xticks(rotation=70)
+                    
+                    # Creating bar chart
+                    plt.bar(x_ticks_gross, gross_profit_margin_final, color='#FF9999', label='Gross Profit Margin', width=bar_width)
+                    plt.bar(x_ticks_operating, operating_profit_margin_final, color='#B57EDC', label='Operating Profit Margin', width=bar_width)
+                    plt.bar(x_ticks_net, net_profit_margin_final, color='#A9A9A9', label='Net Profit Margin', width=bar_width)
+
+                    plt.style.use('_mpl-gallery')
+                    plt.xlabel(' ')
+                    plt.ylabel('Margin (%)')
+                    plt.title('Gross, Operating, and Net Profit Margin')
+                    plt.tight_layout()
+                    plt.legend()
+
+                    # Set the x-tick locations and labels
+                    plt.xticks(x_indices, bar_x_ticks)  
+
+                    # Convert the plot to an image
+                    buffer = BytesIO()
+                    plt.savefig(buffer, format='png')
+                    buffer.seek(0)
+                    bar_image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+                    buffer.close()
+                    
+                    # Clear plots for the next chart
+                    plt.clf()
+                    
+                    # Create the area chart
+                    plt.fill_between(x_ticks, total_assets_final, color='#FF0000', alpha=0.5, label="Total Assets")
+                    plt.fill_between(x_ticks, total_liabilities_final, color='#B57EDC', alpha=0.5, label="Total Liabilities")
+                    plt.fill_between(x_ticks, total_shareholder_equity_final, color='#A9A9A9', alpha=0.5, label="Total Shareholder Equity")
+
+                    # Customize the chart
+                    plt.xlabel("Fiscal Date")
+                    plt.ylabel("Amount (USD)")
+                    plt.title("Trend of Financial Metrics")
+                    plt.legend()
+
+                    # Convert the plot to an image
+                    buffer = BytesIO()
+                    plt.savefig(buffer, format='png')
+                    buffer.seek(0)
+                    area_image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+                    buffer.close()
+   
+                    # Store the fetched data in the session
                     request.session['company_data'] = {
                         'company_name': company_name,
-                        'revenue_list': revenue_list,
-                        'fiscal_date_list': fiscal_date_list,
-                        'net_Income_list': net_Income_list,
-                        'operating_expenses_list': operating_expenses_list,
+                        'line_chart_image_base64': line_chart_image_base64,
+                        'bar_chart_image_base64': bar_image_base64,
+                        'area_chart_image_base64': area_image_base64,
+                        'revenue_list': revenue_final,
+                        'fiscal_date_list': fiscal_date_final,
+                        'net_Income_list': net_income_final,
+                        'operating_expenses_list': operating_expenses_final,
+                        'gross_profit_margin' : gross_profit_margin_final,
+                        'operating_profit_margin' : operating_profit_margin_final,
+                        'net_profit_margin' : net_profit_margin_final,
                     }
-
+                    
+                    print(formatted_news)
+                    print(titles)
+                    print(links)
+                    
                     # Redirect to the company_data URL
                     return redirect('company_data')
 
@@ -70,29 +271,4 @@ def company_data(request):
 
 
 def test(request):
-    # revenue_list = []
-    # fiscal_date_list = []
-    # net_Income_list = []
-    # operating_expenses_list = []
-    # financial_data = fetch_financial_data(API_BASE_URL, params)
-    # formatted_data = json.dumps(financial_data, indent=2)
-    # annual_reports = financial_data.get('quarterlyReports', [])
-    
- 
-    # for report in annual_reports:
-    #     revenue = report.get('totalRevenue')
-    #     fiscal_date = report.get('fiscalDateEnding')
-    #     net_Income = report.get('netIncomeFromContinuingOperations')
-    #     operating_expenses = report.get('operatingExpenses')
-    #     if revenue:
-    #         revenue_list.append(revenue)
-    #         fiscal_date_list.append(fiscal_date)
-    #         net_Income_list.append(net_Income)
-    #         operating_expenses_list.append(operating_expenses)
-        
-        
-    # print(f'fiscal {fiscal_date_list}')
-    # print(f'net {net_Income_list}') 
-    # print(f'operating {operating_expenses_list}')     
-    # print(f'revenue {revenue_list}')
     return render(request, 'financial_pulse/test.html')
