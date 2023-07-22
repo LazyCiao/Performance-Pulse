@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'financial_pulse.apps.FinancialPulseConfig',
+    'crypto_pulse.apps.CryptoPulseConfig',
     'crispy_forms',
     'crispy_bootstrap4',
 ]
@@ -57,7 +58,7 @@ ROOT_URLCONF = 'performance_pulse.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'performance_pulse', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
