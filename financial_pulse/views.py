@@ -1,15 +1,24 @@
+from datetime import datetime
+from io import BytesIO
+import base64
+
+import matplotlib.dates as mdates
+from matplotlib import pyplot as plt
+import numpy as np
+import nltk
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import CompanyForm
-from .alpha_vantage import fetch_income_statement, fetch_balance_sheet, fetch_news_sentiment, fetch_overview, params, API_BASE_URL, news_sentiment_params
-from matplotlib import pyplot as plt
-import matplotlib.dates as mdates
-from io import BytesIO
-import base64
-import json
-from datetime import datetime
-import numpy as np
-import nltk
+from .alpha_vantage import (
+    fetch_income_statement,
+    fetch_balance_sheet,
+    fetch_news_sentiment,
+    fetch_overview,
+    params,
+    API_BASE_URL,
+    news_sentiment_params,
+)
 
 
 def search_company(request):
