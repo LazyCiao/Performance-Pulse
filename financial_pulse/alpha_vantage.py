@@ -9,6 +9,7 @@ def fetch_income_statement(api_base_url, params, symbol=None):
     if symbol:
         params['symbol'] = symbol
     response = requests.get(api_base_url, params=params)
+    print(response)
     if response.status_code == 200:
         data = response.json()
         return data
@@ -21,6 +22,7 @@ def fetch_balance_sheet(api_base_url, params, symbol=None):
     if symbol:
         params['symbol'] = symbol
     response = requests.get(api_base_url, params=params)
+    print(response)
     if response.status_code == 200:
         data = response.json()
         return data
@@ -28,12 +30,12 @@ def fetch_balance_sheet(api_base_url, params, symbol=None):
         return None
     
 
-def fetch_news_sentiment(api_base_url, params, symbol=None):
-    params['function'] = 'NEWS_SENTIMENT'
-    params['sort'] = 'LATEST'
+def fetch_news_sentiment(api_base_url, news_sentiment_params, symbol=None):
+    news_sentiment_params['function'] = 'NEWS_SENTIMENT'
     if symbol:
-        params['tickers'] = symbol  
-    response = requests.get(api_base_url, params=params)
+        news_sentiment_params['tickers'] = symbol  
+    response = requests.get(api_base_url, params=news_sentiment_params)
+    print(response)
     if response.status_code == 200:
         data = response.json()
         return data
@@ -46,6 +48,7 @@ def fetch_overview(api_base_url, params, symbol=None):
     if symbol:
         params['symbol'] = symbol
     response = requests.get(api_base_url, params=params)
+    print(response)
     if response.status_code == 200:
         data = response.json()
         return data
@@ -55,4 +58,11 @@ def fetch_overview(api_base_url, params, symbol=None):
 
 params = {
     'apikey': API_KEY,
+} 
+    
+    
+news_sentiment_params = {
+    'apikey': API_KEY,
+    'sort' : 'LATEST',
+    'limit' : 3,
 }
