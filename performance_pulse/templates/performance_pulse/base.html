@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock title %}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="icon" href="/static/images/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.plot.ly/plotly-latest.min.css">
+    <link rel="icon" href="/static/images/logo5.png" type="image/x-icon">
     <style>
         body, html {
             font-family: 'Montserrat', sans-serif;
             height: 100%;
-            background-image: url("/static/images/pxfuel (3).jpg");
+            background-image: url("/static/images/background1.jpg");
             background-repeat: no-repeat;
             background-size: cover;
             background-position: center;
@@ -67,13 +68,16 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'financial_pulse:search' %}">Financial Charts</a>
+                        <a class="nav-link" href="{% url 'financial_pulse:search_company' %}">Financial Charts</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'crypto_pulse:crypto' %}">Crypto Pulse</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'financial_pulse:test' %}">Social Media</a>
+                        <a class="nav-link" href="{% url 'financial_pulse:social_media' %}">Social Media</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'crypto_pulse:test' %}">test</a>
                     </li>
                 </ul>
             </div>

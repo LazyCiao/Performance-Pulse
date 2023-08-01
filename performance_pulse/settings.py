@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'crypto_pulse.apps.CryptoPulseConfig',
     'crispy_forms',
     'crispy_bootstrap4',
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [
