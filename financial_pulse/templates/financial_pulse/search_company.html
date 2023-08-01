@@ -1,12 +1,7 @@
 {% extends 'performance_pulse/base.html' %}
 {% load crispy_forms_tags %}
-{% load static %}  <!-- Add this line to load static files -->
 
 {% block title %}Company Search | Performance Pulse{% endblock title %}
-
-{% block extra_styles %}
-<link rel="stylesheet" type="text/css" href="{% static 'custom.css' %}">
-{% endblock %}
 
 {% block content %}
 <style>
@@ -14,13 +9,11 @@
         overflow-y: hidden;
     }
 
-    .container {
-        position: relative;
-    }
+
 
     .alert {
         position: absolute;
-        top: 10px;
+        top: 30px;
         left: 50%;
         transform: translateX(-50%);
         z-index: 1;
@@ -78,7 +71,7 @@
 
         <div class="row justify-content-center align-items-center" style="height: 100vh;">
             <div class="col-md-6">
-                <form method="POST" action="{% url 'financial_pulse:search' %}" class="crispy-form">
+                <form method="POST" action="{% url 'financial_pulse:search_company' %}" class="crispy-form">
                     {% csrf_token %}
                     <div class="text-center">
                         {{ form|crispy }}

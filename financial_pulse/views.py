@@ -10,7 +10,7 @@ import nltk
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import CompanyForm
-from .alpha_vantage import (
+from .api_calls import (
     fetch_income_statement,
     fetch_balance_sheet,
     fetch_news_sentiment,
@@ -35,7 +35,7 @@ def search_company(request):
             
             # Check if the response contains information about reaching the daily limit
             if income_statement_data and 'Information' in income_statement_data:
-                messages.error(request, "This application is for learning and testing purposes only. "
+                messages.error(request, "This application is for learning and testing purposes only."
                        "The maximum daily fetch requests have been reached for this API. "
                        "Please try again tomorrow.")
                 return render(request, 'financial_pulse/search_company.html', {'form': form})
@@ -337,7 +337,7 @@ def search_company(request):
                     # Redirect to the company_data URL
                     return redirect('financial_pulse:company_data')
 
-                messages.error(request, 'No financial data found for the entered company symbol.')
+            messages.error(request, 'No financial data found for the entered company symbol.')
 
     else:
         form = CompanyForm()
@@ -357,5 +357,5 @@ def company_data(request):
         return redirect('financial_pulse:search_company')
 
 
-def test(request):
+def social_media(request):
     return render(request, 'financial_pulse/test.html')
