@@ -1,0 +1,135 @@
+{% extends 'performance_pulse/base.html' %}
+
+{% block title %}Crypto Charts| Performance Pulse{% endblock title %}
+{% load custom_filters humanize %}
+
+{% block content %}
+<style>
+    .center-container {
+        display: flex;
+        flex-direction: column; /* Stack elements vertically */
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 120px);
+        padding: 20px;
+    }
+
+    /* Add styles for the container div */
+    #coin-chart-container {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(13.4px);
+        -webkit-backdrop-filter: blur(13.4px);
+        width: 100%;
+        max-width: 1200px;
+        margin-top: 40px;
+        display: flex; /* Use flexbox layout */
+        flex-direction: column; /* Stack elements vertically */
+        align-items: center; /* Center elements horizontally */
+    }
+
+    .green {
+        color: green;
+    }
+    
+    .red {
+        color: red;
+    }
+    
+    #coin-chart {
+        width: 100%;
+        height: 70vh;
+    }
+
+    /* Add styles for the coin info banner */
+    .coin-info-banner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        border-radius: 16px;
+        padding: 10px;
+        margin-top: 20px; /* Add margin-top to separate banner from chart */
+        margin-bottom: 20px;
+        color: white;
+    }
+
+    .coin-info-logo {
+        display: flex;
+        align-items: center;
+    }
+
+    .coin-logo-banner {
+        height: 30px;
+        width: auto;
+        margin-right: 8px;
+    }
+
+    .coin-info-item {
+        margin-right: 60px;
+    }
+
+    .coin-info-text {
+        font-size: 16px;
+    }
+
+    /* Add styles for the error message */
+    .error-message {
+        color: red;
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+    
+</style>
+
+<div class="center-container">
+    {% if messages %}
+        <div class="alert alert-danger" role="alert">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <div id="coin-chart-container">
+        <div id="coin-chart"></div>
+
+        {% if coin_info %}
+            <div class="coin-info-banner">
+                <div class="coin-info-item">
+                    <span class="coin-info-text">Price: ${{ coin_info.current_price|floatformat:2 }}</span>
+                </div>
+                <div class="coin-info-item">
+                    Change (24h):
+                    {% if coin_info.daily_price_change >= 0 %}
+                        <span class="green">{{ coin_info.daily_price_change|floatformat:2 }}%</span>
+                    {% else %}
+                        <span class="red">{{ coin_info.daily_price_change|floatformat:2 }}%</span>
+                    {% endif %}
+                </div>
+                <div class="coin-info-item">
+                    <span class="coin-info-text">Volume (24h): ${{ coin_info.daily_volume|intcomma|shorten_market_cap }}</span>
+                </div>
+                <div class="coin-info-item">
+                    <span class="coin-info-text">Market Cap: ${{ coin_info.market_cap|intcomma|shorten_market_cap }}</span>
+                </div>
+                <div class="coin-info-item">
+                    <a class="btn-details" href="{% url 'crypto_pulse:coin_details' coin_info.name %}">More Details</a>
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+
+    <!-- Load the Plotly JavaScript library from a CDN -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <!-- Load the chart JSON data from the view -->
+    <script>
+        const chartData = {{ chart_json|safe }};
+        Plotly.react('coin-chart', chartData.data, chartData.layout);
+    </script>
+</div>
+
+{% endblock content %}
