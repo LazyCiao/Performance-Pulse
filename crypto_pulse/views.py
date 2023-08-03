@@ -8,17 +8,21 @@ from .api_calls import (
     test_fetch,
     fetch_coin_details,
     fetch_coin_price,
+    fetch_order_book,
     API_BASE_URL,
     API_BASE_URL_CHARTS,
     API_BASE_URL_DETAILS,
+    API_ORDER_BOOK_URL,
     params,
     chart_params,
-    line_params
+    line_params,
+    order_params
 )
 import re
 import json
 import datetime
 import pandas as pd
+from .websocket_stream import websocket_stream, WEBSOCKET_BASE_URL, socket_params
 
 
 def crypto(request):
@@ -64,13 +68,21 @@ def coin_chart(request, coin_symbol):
     if coin_symbol == 'USDTUSDT':
         coin_symbol = 'BUSDUSDT'
     title_coin_symbol = coin_symbol.replace('USDT', '/USDT')
+    
     # Fetch data      
     candles_data = fetch_market_charts(API_BASE_URL_CHARTS, coin_symbol=coin_symbol, params=chart_params)
-
+    orderbook_data = fetch_order_book(API_ORDER_BOOK_URL, coin_symbol=coin_symbol, params=order_params)
+    
     # Check if data was successfully fetched
-    if candles_data is None:
-        messages.error(request, 'failed to fetch candlestick data. Please try again.')
+    if candles_data is None and orderbook_data is None:
+        messages.error(request, 'Failed to fetch candlestick data. Please try again.')
         return render(request, 'crypto_pulse/coin_chart.html')
+    
+    # Parse the orderbook data from Binance API
+    bids_data = orderbook_data['bids']
+    bids_total = [float(bid[0]) * float(bid[1]) for bid in bids_data]
+    asks_data = orderbook_data['asks']
+    asks_total = [float(ask[0]) * float(ask[1]) for ask in asks_data]
     
     # Parse the data from the Binance API to create the candlestick chart
     timestamps = [candle[0] for candle in candles_data]
@@ -110,7 +122,7 @@ def coin_chart(request, coin_symbol):
         plot_bgcolor='rgba(0, 0, 0, 0)',  # Set the plot area background to transparent
         paper_bgcolor='rgba(0, 0, 0, 0)',  # Set the entire chart background to transparent
         font=dict(color='white'),  # Set the font color for the labels and legend to white
-        title=dict(text=f'Candlestick Chart for {title_coin_symbol}',  # Set the title of the chart
+        title=dict(text=f'{title_coin_symbol}',  # Set the title of the chart
                    x=0.5,  # Set the title position to the center of the chart
                    y=0.95,  # Set the title position relative to the y-axis
                    font=dict(size=24)  # Set the font size of the title
@@ -135,8 +147,9 @@ def coin_chart(request, coin_symbol):
                 'market_cap': coin.get('market_cap'),
             }
             break
+        
     # Pass the selected coin's data and chart JSON to the template
-    return render(request, 'crypto_pulse/coin_chart.html', {'chart_json': chart_json, 'coin_info': coin_info})
+    return render(request, 'crypto_pulse/coin_chart.html', {'chart_json': chart_json, 'coin_info': coin_info, 'bids': bids_data, 'asks': asks_data, 'bids_total': bids_total, 'asks_total': asks_total})
 
 
 def coin_details(request, coin_name):
@@ -177,9 +190,9 @@ def coin_details(request, coin_name):
     return render(request, 'crypto_pulse/coin_details.html', context)
 
 
-def test(request):
-    data = test_fetch(API_BASE_URL_CHARTS)
-    formatted_data = json.dumps(data, indent=2)
-    print(formatted_data)
-
+def test(request, coin_symbol='btcusdt', params=socket_params):
+    ws = websocket_stream(coin_symbol=coin_symbol, params=params)
+    
+    formatted_data = "Websocket stream is running!"
+    
     return render(request, 'crypto_pulse/test.html', {'formatted_data': formatted_data})

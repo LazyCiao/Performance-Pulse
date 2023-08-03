@@ -5,12 +5,19 @@
 
 {% block content %}
 <style>
+    .ask {
+        margin-bottom: 20px;
+    }
+    .try {
+        color: white;
+        list-style: none;
+    }
+
     .center-container {
         display: flex;
-        flex-direction: column; /* Stack elements vertically */
         justify-content: center;
         align-items: center;
-        min-height: calc(100vh - 120px);
+        min-height: 100vh; /* Set the height to 100vh to cover the full viewport height */
         padding: 20px;
     }
 
@@ -22,24 +29,43 @@
         backdrop-filter: blur(13.4px);
         -webkit-backdrop-filter: blur(13.4px);
         width: 100%;
-        max-width: 1200px;
+        max-width: 1400px;
         margin-top: 40px;
         display: flex; /* Use flexbox layout */
-        flex-direction: column; /* Stack elements vertically */
-        align-items: center; /* Center elements horizontally */
+        flex-direction: row; /* Align elements horizontally */
+    }
+
+    #chart-container {
+        width: 66.66%; /* Take 2/3 of the screen */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #table-container {
+        width: 33.33%; /* Take 1/3 of the screen */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #table-container table {
+        margin-top: 20px; /* Add margin-top to separate the tables */
+        font-size: 14px; /* Reduce the font size for column titles */
     }
 
     .green {
-        color: green;
+        color: green; /* Set the text color to green */
     }
-    
+
     .red {
-        color: red;
+        color: red; /* Set the text color to red */
     }
-    
+
     #coin-chart {
-        width: 100%;
-        height: 70vh;
+        width: 110%;
+        height: 60vh;
     }
 
     /* Add styles for the coin info banner */
@@ -47,7 +73,6 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-
         border-radius: 16px;
         padding: 10px;
         margin-top: 20px; /* Add margin-top to separate banner from chart */
@@ -68,6 +93,8 @@
 
     .coin-info-item {
         margin-right: 60px;
+        text-align: center;
+
     }
 
     .coin-info-text {
@@ -91,35 +118,87 @@
             {% endfor %}
         </div>
     {% endif %}
-    
+
     <div id="coin-chart-container">
-        <div id="coin-chart"></div>
-
-        {% if coin_info %}
-            <div class="coin-info-banner">
-                <div class="coin-info-item">
-                    <span class="coin-info-text">Price: ${{ coin_info.current_price|floatformat:2 }}</span>
-                </div>
-                <div class="coin-info-item">
-                    Change (24h):
-                    {% if coin_info.daily_price_change >= 0 %}
-                        <span class="green">{{ coin_info.daily_price_change|floatformat:2 }}%</span>
-                    {% else %}
-                        <span class="red">{{ coin_info.daily_price_change|floatformat:2 }}%</span>
-                    {% endif %}
-                </div>
-                <div class="coin-info-item">
-                    <span class="coin-info-text">Volume (24h): ${{ coin_info.daily_volume|intcomma|shorten_market_cap }}</span>
-                </div>
-                <div class="coin-info-item">
-                    <span class="coin-info-text">Market Cap: ${{ coin_info.market_cap|intcomma|shorten_market_cap }}</span>
-                </div>
-                <div class="coin-info-item">
-                    <a class="btn-details" href="{% url 'crypto_pulse:coin_details' coin_info.name %}">More Details</a>
-                </div>
+        <div id="table-container">
+            <div>
+                <table class='bid try'>
+                    <tr>
+                        <th style="font-size: 10px; padding-right: 40px; text-align: center;">Price</th> 
+                        <th style="font-size: 10px; padding-right: 40px; text-align: center;">BTC</th>
+                        <th style="font-size: 10px; text-align: center;">Total</th> 
+                    </tr>
+                    {% for bid in bids %}
+                    <tr>
+                        <td style="color: red; text-align: center; padding-right: 40px;">
+                            {% if bid.0 > 1 %}
+                                {{ bid.0|floatformat:2 }}
+                            {% else %}
+                                {{ bid.0|floatformat:4 }}
+                            {% endif %}
+                        </td>
+                        <td style="padding-right: 40px; text-align: center;">{{ bid.1|floatformat:5 }}</td>
+                        <!-- Calculate the total for the current bid-->
+                        <td style="text-align: center; ">{{ bid.0|floatformat:4|intcomma }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
             </div>
-        {% endif %}
 
+            <div>
+                <table class='ask try'>
+                    <tr>
+                        <th style="font-size: 10px; padding-right: 40px; text-align: center;">Price</th>
+                        <th style="font-size: 10px; padding-right: 40px; text-align: center;">BTC</th>
+                        <th style="font-size: 10px; text-align: center;">Total</th> 
+                    </tr>
+                    {% for ask in asks %}
+                    <tr>
+                        <td style="color: green; text-align: center; padding-right: 40px;">
+                            {% if ask.0 > 1 %}
+                                {{ ask.0|floatformat:2 }}
+                            {% else %}
+                                {{ ask.0|floatformat:4 }}
+                            {% endif %}
+                        </td> 
+                        <td style="padding-right: 40px; text-align: center;">{{ ask.1|floatformat:5 }}</td>
+                        <!-- Calculate the total for the current ask -->
+                        <td style="text-align: center; ">{{ ask.0|floatformat:4|intcomma }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+
+        <div id="chart-container">
+            <div id="coin-chart"> <!-- Adjust the width here (e.g., 80%) -->
+                <!-- Candlestick chart code unchanged -->
+            </div>
+            {% if coin_info %}
+                <div class="coin-info-banner">
+                    <div class="coin-info-item">
+                        <span class="coin-info-text">Price: ${{ coin_info.current_price|floatformat:2 }}</span>
+                    </div>
+                    <div class="coin-info-item">
+                        Change (24h):
+                        {% if coin_info.daily_price_change >= 0 %}
+                            <span class="green">{{ coin_info.daily_price_change|floatformat:2 }}%</span>
+                        {% else %}
+                            <span class="red">{{ coin_info.daily_price_change|floatformat:2 }}%</span>
+                        {% endif %}
+                    </div>
+                    <div class="coin-info-item">
+                        <span class="coin-info-text">Volume (24h): ${{ coin_info.daily_volume|intcomma|shorten_market_cap }}</span>
+                    </div>
+                    <div class="coin-info-item">
+                        <span class="coin-info-text">Market Cap: ${{ coin_info.market_cap|intcomma|shorten_market_cap }}</span>
+                    </div>
+                    <div class="coin-info-item">
+                        <a class="btn-details" href="{% url 'crypto_pulse:coin_details' coin_info.name %}">More Details</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
     </div>
 
     <!-- Load the Plotly JavaScript library from a CDN -->
