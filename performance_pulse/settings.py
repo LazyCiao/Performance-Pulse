@@ -42,7 +42,32 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap4',
     'django.contrib.humanize',
+    'channels',
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',  # Change this to 'DEBUG' if you want more detailed logs
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',  # Change this to 'DEBUG' if you want more detailed logs
+        },
+        'your_app': {
+            'handlers': ['console'],
+            'level': 'DEBUG',  # Change this to 'INFO' if you want to see consumer logs
+        },
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -73,7 +98,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'performance_pulse.wsgi.application'
-
+ASGI_APPLICATION = 'performance_pulse.routing.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
