@@ -1,13 +1,11 @@
 from django.core.paginator import Paginator
 import plotly.graph_objects as go
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib import messages
 from .api_calls import (
     fetch_coins,
     fetch_market_charts,
-    test_fetch,
     fetch_coin_details,
-    fetch_coin_price,
     fetch_order_book,
     API_BASE_URL,
     API_BASE_URL_CHARTS,
@@ -15,14 +13,12 @@ from .api_calls import (
     API_ORDER_BOOK_URL,
     params,
     chart_params,
-    line_params,
     order_params
 )
 import re
 import json
 import datetime
-import pandas as pd
-from .websocket_stream import websocket_stream, WEBSOCKET_BASE_URL, socket_params
+from .websocket import BinanceWebSocket
 
 
 def crypto(request):
@@ -190,9 +186,10 @@ def coin_details(request, coin_name):
     return render(request, 'crypto_pulse/coin_details.html', context)
 
 
-def test(request, coin_symbol='btcusdt', params=socket_params):
-    ws = websocket_stream(coin_symbol=coin_symbol, params=params)
-    
-    formatted_data = "Websocket stream is running!"
-    
-    return render(request, 'crypto_pulse/test.html', {'formatted_data': formatted_data})
+def test(request):
+    binance_ws = BinanceWebSocket(template_name='crypto_pulse/test.html', coin_symbol='btcusdt', interval='1m')
+
+    context = {
+        'websocket_url': binance_ws.websocket_url,
+    }
+    return render(request, 'crypto_pulse/test.html', context)

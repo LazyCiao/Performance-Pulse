@@ -3,4 +3,33 @@
 {% block title %}Test | Performance Pulse{% endblock title %}
 
 {% block content %}
+<style>
+    .center-content {
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 80vh;
+        text-align: center;
+    }
+    .banner {
+        background-color: #333;
+        color: white;
+        padding: 10px;
+        width: 80%;
+        margin: 0 auto;
+    }
+</style>
+
+<div class="center-content">
+    <h1>Live Candlestick Data</h1>
+    <p>WebSocket URL: {{ websocket_url }}</p>
+    <div class="banner">
+        <p>Timestamp: {{ timestamp }}</p>
+        <p>Open Price: {{ open_price }}</p>
+        <p>High Price: {{ high_price }}</p>
+        <p>Low Price: {{ low_price }}</p>
+    </div>
+</div>
 {% endblock content %}
