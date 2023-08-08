@@ -23,3 +23,6 @@ Before you start, make sure you have the following tools installed:
 ## Installation
 
 1. Clone the repository:
+
+git clone ```https://github.com/your-username/your-project.git```
+cd your-project
