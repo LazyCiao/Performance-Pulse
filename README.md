@@ -10,8 +10,6 @@ Welcome to the documentation for the Ooti Test project! This guide will help you
 4. [Running the Project](#running-the-project)
 5. [Usage](#usage)
 6. [Testing](#testing)
-7. [Contributing](#contributing)
-8. [License](#license)
 
 ## Prerequisites
 
