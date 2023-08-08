@@ -49,8 +49,16 @@ git clone ```https://github.com/axoneprohr/ooti_test.git```
 
 ## Usage
 
-- Visit the home page at ```http://127.0.0.1:8000/```
-- Use the provided forms and features to interact with the project.
+1. **Visit the Home Page:**
+   Access the home page of the project by navigating to [http://127.0.0.1:8000/](http://127.0.0.1:8000/) in your web browser. This is where you'll find the main interface of the application.
+
+2. **Interact with the Provided Features:**
+   Utilize the features and forms provided on the home page to interact with the project. You can perform actions like submitting queries, fetching data, and analyzing results.
+
+3. **Fetching Data via URLs:**
+   For developers familiar with APIs, you can also fetch data programmatically by sending GET requests to specific URLs. For example, to retrieve an analysis for a specific title, you can use a URL like:
+   ```http://127.0.0.1:8000/api/extract-analysis/?title=YourTitleHere```
+   Replace `YourTitleHere` with the desired title you want to analyze.
 
 ## Testing
 
