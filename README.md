@@ -1,6 +1,6 @@
 # Ooti Test
 
-Welcome to the documentation for the Test Logan project! This guide will help you set up and run the project on your local machine.
+Welcome to the documentation for the Ooti Test project! This guide will help you set up and run the project on your local machine.
 
 ## Table of Contents
 
