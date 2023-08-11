@@ -1,6 +1,6 @@
 {% extends 'performance_pulse/base.html' %}
 
-{% block title %}Crypto Market| Performance Pulse{% endblock title %}
+{% block title %}Crypto Market | Performance Pulse{% endblock title %}
 
 {% block content %}
 <style>
@@ -8,45 +8,19 @@
         overflow-y: hidden; 
     }
 
-    #line-chart-container {
-        background: rgba(0, 0, 0, 0.1);
-        border-radius: 16px;
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(13.4px);
-        -webkit-backdrop-filter: blur(13.4px);
-        width: 100%;
-        max-width: 1200px;
-        margin-top: 40px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
     .styled-div {
-        background: rgba(0, 0, 0, 0);
+        background: rgba(255, 255, 255, 0);
         border-radius: 16px;
         box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(13.4px);
-        -webkit-backdrop-filter: blur(13.4px);
-        /* Add any other custom styles for the div here */
-        padding: 20px;
-        color: white; /* Set the text color to white */
-    }
-
-    .chart-div {
-        background: rgba(0, 0, 0, 0);
-        border-radius: 16px;
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(13.4px);
-        -webkit-backdrop-filter: blur(13.4px);
-        /* Add any other custom styles for the chart div here */
-        padding: 20px;
-        margin-top: 20px; /* Add some margin to separate the chart from the description */
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.19);
+        padding: 30px;
+        color: white; 
     }
 </style>
 
-
-<body>
+<body> 
     <div class="container d-flex justify-content-center align-items-center min-vh-100">
         <div class="styled-div">
             {% if messages %}
@@ -56,23 +30,19 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            <h4>About {{ name }} ({{ symbol }})</h4>
-            <p>{{ description }}</p>
-        </div>
-    </div>
-    <div class="container d-flex justify-content-center align-items-center min-vh-100">
-        <div id="line-chart-container">
-            <!-- Load the Plotly JavaScript library from a CDN -->
-            <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
-            <!-- Load the line chart JSON data from the view -->
-            <script>
-                const lineChartData = {{ line_chart_json|safe }};
-                Plotly.react('line-chart', lineChartData.data, lineChartData.layout);
-            </script>
+            <h4>About {{ name }} ({{ symbol }})</h4>
+            {% if not description %}
+                <p>The API was unable to fetch any description for {{ name }}</p>
+            {% else %}
+                <p class='description'>{{ description }}</p>
+            {% endif %}
+
+            <!-- Display the line chart -->
+            {% if line_chart %}
+                <img src="data:image/png;base64,{{ line_chart }}" alt="Line Chart">
+            {% endif %}
         </div>
     </div>
 </body>
-
-
 {% endblock content %}

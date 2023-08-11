@@ -2,11 +2,15 @@ from django.core.paginator import Paginator
 import plotly.graph_objects as go
 from django.shortcuts import render
 from django.contrib import messages
+import matplotlib.dates as mdates
 from .api_calls import (
     fetch_coins,
     fetch_market_charts,
     fetch_coin_details,
     fetch_order_book,
+    fetch_coin_history,
+    test,
+    API_COINCAP_URL,
     API_BASE_URL,
     API_BASE_URL_CHARTS,
     API_BASE_URL_DETAILS,
@@ -15,15 +19,22 @@ from .api_calls import (
     chart_params,
     order_params
 )
+import matplotlib
+matplotlib.use('Agg')
+from dateutil.parser import parse as parse_date
+import matplotlib.pyplot as plt
+from io import BytesIO
+import base64
+from datetime import datetime
 import re
-import json
 import datetime
-from .websocket import BinanceWebSocket
 
 
 def crypto(request):
+    # Fetch data
     coin_data = fetch_coins(API_BASE_URL, params)
 
+    # Check if data was successfully fetch
     if coin_data is None:
         messages.error(request, 'The limit for fetch requests has been reached. Please try again later.')
         return render(request, 'crypto_pulse/crypto.html')
@@ -34,10 +45,9 @@ def crypto(request):
     
     # Split data into 10 coins per page
     paginator = Paginator(coin_data, 10)  
-
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-
+  
     # Store coin data in the session
     request.session['coin_data'] = coin_data
     
@@ -76,9 +86,7 @@ def coin_chart(request, coin_symbol):
     
     # Parse the orderbook data from Binance API
     bids_data = orderbook_data['bids']
-    bids_total = [float(bid[0]) * float(bid[1]) for bid in bids_data]
     asks_data = orderbook_data['asks']
-    asks_total = [float(ask[0]) * float(ask[1]) for ask in asks_data]
     
     # Parse the data from the Binance API to create the candlestick chart
     timestamps = [candle[0] for candle in candles_data]
@@ -137,28 +145,124 @@ def coin_chart(request, coin_symbol):
         if coin['symbol'] == real_coin_symbol:
             coin_info = {
                 'name': coin.get('name'),
+                'symbol': real_coin_symbol,
                 'current_price': coin.get('current_price'),
                 'daily_price_change': coin.get('price_change_percentage_24h'),
                 'daily_volume': coin.get('total_volume'),
                 'market_cap': coin.get('market_cap'),
             }
             break
-        
+
     # Pass the selected coin's data and chart JSON to the template
-    return render(request, 'crypto_pulse/coin_chart.html', {'chart_json': chart_json, 'coin_info': coin_info, 'bids': bids_data, 'asks': asks_data, 'bids_total': bids_total, 'asks_total': asks_total})
+    return render(request, 'crypto_pulse/coin_chart.html', {'chart_json': chart_json, 
+                                                            'coin_info': coin_info, 
+                                                            'bids': bids_data, 
+                                                            'asks': asks_data})
 
 
 def coin_details(request, coin_name):
     # Fetch data for description
-    print(coin_name)
     if coin_name.lower() == 'xrp':
         coin_name = 'ripple'
     if coin_name.lower() == 'binance usd':
-        coin_name = 'tether'
+        coin_name = 'binance-usd'
     if coin_name.lower() == 'bnb':
         coin_name = 'busd'
+    if coin_name.lower() == 'usd coin' or coin_name.lower() == 'usd%20coin':
+        coin_name = 'usd-coin'
+    if coin_name.lower() == 'wrapped bitcoin' or coin_name.lower() == 'wrapped%20bitcoin':
+        coin_name = 'wrapped-bitcoin'
+    if coin_name.lower() == 'shiba inu' or coin_name.lower() == 'shiba%20inu':
+        coin_name = 'shiba-inu'
+    if coin_name.lower() == 'bitcoin cash' or coin_name.lower() == 'bitcoin%20cash':
+        coin_name = 'bitcoin-cash'
+    if coin_name.lower() == 'ethereum classic' or coin_name.lower() == 'ethereum%20classic':
+        coin_name = 'ethereum-classic'
+    if coin_name.lower() == 'cosmos hub' or coin_name.lower() == 'cosmos%20hub':
+        coin_name = 'cosmos-hub'
+
+           
     coin_details = fetch_coin_details(API_BASE_URL_DETAILS, coin_name=coin_name)
-    print(coin_name)
+    test_data = test()
+    
+    format_test_data = test_data['data']
+    
+    test_id = []
+    test_symbol = []
+    test_name = []
+    test_link = []
+    
+    for data in format_test_data:
+        ids = data['id']
+        symbols = data['symbol']
+        names = data['name']
+        links = data['explorer']
+        
+        test_id.append(ids)
+        test_symbol.append(symbols)
+        test_name.append(names)
+        test_link.append(links) 
+    
+    if coin_name.lower() == 'ripple':
+        coin_name = 'xrp'       
+        
+    coin_history = fetch_coin_history(API_COINCAP_URL, coin_name=coin_name)
+    
+    if coin_history is None:
+        messages.error(request, 'Failed to fetch data. Please try again.')
+        return render(request, 'crypto_pulse/coin_chart.html')
+    
+    data = coin_history['data']
+    
+    # Parse coin history 
+    data = coin_history['data']
+
+    prices = []
+    dates = []
+
+    for data_point in data:
+        price = data_point['priceUsd']
+        date = data_point['date']
+        
+        prices.append(float(price))
+        dates.append(date)
+        
+    # Convert formatted_dates to datetime objects
+    formatted_dates = [parse_date(date_string) for date_string in dates]
+
+    # Clear plots
+    plt.clf()
+    plt.figure(figsize=(11, 4))  # Adjust the height to 4
+
+    # Creating line chart
+    plt.plot(formatted_dates, prices, linewidth=2)
+
+    # Plot info and style
+    plt.style.use('_mpl-gallery')
+    plt.xlabel('', color='white')  # Increase font size to 12
+    plt.ylabel('', color='white')  # Increase font size to 12
+    plt.title(f'{coin_name} price', color='white')  # Increase font size to 16
+    plt.tight_layout()
+
+    # Remove the grid from both axes
+    plt.grid(False)
+
+    # Style tick labels on both axes to have a white font color and increase font size to 10
+    plt.tick_params(axis='x', colors='white')  
+    plt.tick_params(axis='y', colors='white', labelsize=8)
+
+    # Configure x-axis tick marks to display fewer dates
+    locator = mdates.AutoDateLocator(minticks=5, maxticks=9)
+    formatter = mdates.ConciseDateFormatter(locator)
+    plt.gca().xaxis.set_major_locator(locator)
+    plt.gca().xaxis.set_major_formatter(formatter)
+
+    # Convert the plot to an image
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png', transparent=True)
+    buffer.seek(0)
+    line_chart = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    buffer.close()
     
     # Check if data was successfully fetched
     if coin_details is None:
@@ -179,17 +283,7 @@ def coin_details(request, coin_name):
         'description': cleaned_description,
         'name': name,
         'symbol': symbol,
-        # 'chart_data': chart_data,  # Pass the chart data to the template
+        'line_chart': line_chart
     }
-    
-    # print(formatted_coin_details)
+
     return render(request, 'crypto_pulse/coin_details.html', context)
-
-
-def test(request):
-    binance_ws = BinanceWebSocket(template_name='crypto_pulse/test.html', coin_symbol='btcusdt', interval='1m')
-
-    context = {
-        'websocket_url': binance_ws.websocket_url,
-    }
-    return render(request, 'crypto_pulse/test.html', context)

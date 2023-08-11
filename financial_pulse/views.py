@@ -1,7 +1,8 @@
 from datetime import datetime
 from io import BytesIO
 import base64
-
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.dates as mdates
 from matplotlib import pyplot as plt
 import numpy as np
@@ -183,7 +184,7 @@ def search_company(request):
                     fiscal_date_final = [str(date) for date in fiscal_date_list_datetime[::-1]]
                     x_ticks = np.array(fiscal_date_final, dtype='datetime64')
                     bar_x_ticks = [datetime.strptime(date, '%Y-%m-%d').strftime('%Y-%m') for date in fiscal_date_final]
-
+                   
                     # Clear plots
                     plt.clf()
                     plt.figure(figsize=(10, 6))
@@ -262,13 +263,6 @@ def search_company(request):
                     # Loop through all legend texts and set the color to white
                     for text in legend.get_texts():
                         text.set_color('white')
-
-                    # Convert the plot to an image
-                    buffer = BytesIO()
-                    plt.savefig(buffer, format='png', transparent=True)
-                    buffer.seek(0)
-                    bar_chart_image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
-                    buffer.close()
 
                     # Set the x-tick locations and labels
                     plt.xticks(x_indices, bar_x_ticks)  
@@ -355,7 +349,3 @@ def company_data(request):
         return render(request, 'financial_pulse/company_data.html', {'company_data': company_data})
     else:
         return redirect('financial_pulse:search_company')
-
-
-def social_media(request):
-    return render(request, 'financial_pulse/test.html')

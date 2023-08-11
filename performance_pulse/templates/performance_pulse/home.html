@@ -1,0 +1,146 @@
+{% extends 'performance_pulse/base.html' %}
+
+{% block title %}Home | Performance Pulse{% endblock title %}
+
+{% block content %}
+<style>
+    .body {
+        overflow-y: hidden; 
+    }
+
+    .grid-div {
+        color: white;
+
+        background: rgba(255, 255, 255, 0);
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.19);
+        text-align: center;
+        padding: 20px;
+        margin: 10px;
+        font-size: 14px; /* Adjust the font size as needed */
+    }
+
+    .col-md-4 {
+        /* Set the width of each column to make the divs wider */
+        width: calc(33.33% - 20px); /* Adjust the width as needed */
+    }
+
+    /* Adjust the max-width of the container */
+    .container {
+        max-width: 1200px; /* Adjust the max-width as needed */
+    }
+
+    .btn {
+        background-color: #ffffff;
+        color: #000000;
+        border: 2px solid #ffffff; 
+        transition: background-color 0.2s ease, border-color 0.2s ease; 
+    }
+
+    .btn:hover {
+        transition: color 0.3s ease; 
+        background-color: #FF6347; 
+        color: #ffffff; 
+        border: 2px solid #FF6347; 
+    }
+
+    .btn:active {
+        transition: color 0.3s ease; 
+        background-color: #D40B00; 
+        color: #ffffff; 
+        border: 2px solid #D40B00; 
+        transform: translateY(2px); 
+    }
+
+    form button[type="submit"]:active {
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0.5); 
+    }
+
+    .heading-with-bar {
+        position: relative;
+    }
+
+    .white-bar {
+        display: block;
+        width: 100%;
+        height: 1px;
+        background-color: white;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+</style>
+<body>
+    <div class="container">
+        <div class="d-flex justify-content-center align-items-center vh-100">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="grid-div">
+                        <div class="heading-with-bar">
+                            <h3>Equity Tracker</h3>
+                            <span class="white-bar"></span>
+                        </div>
+                        <p>A Django web app that reflects my passion for building data-driven solutions. 
+                            It empowers users to search for public companies and provides comprehensive financial analysis.</p>
+                        <p>By leveraging the Alpha Vantage API, Financial Pulse offers real-time financial data, 
+                            Matplotlib charts, and valuable insights on company performance as well as the latest news articles. </p>
+                        <p>The app showcases my expertise in working with external APIs, data manipulation, and utilizing libraries NLP, Matplotlib and Numpy. 
+                            I'm proud to present this project as a demonstration of my ability to create efficient and effective applications.</p>
+                        <div class="d-flex justify-content-center mt-4">
+                            <a class="btn mx-2" href="{% url 'financial_pulse:search_company' %}">View App</a>
+                            <a class="btn mx-2" href="#" target="_blank">View Code</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="grid-div">
+                        <div class="heading-with-bar">
+                            <h3>Crypto Market</h3>
+                            <span class="white-bar"></span>
+                        </div>
+                        <p>A dynamic Django web application dedicated to the world of cryptocurrencies. 
+                            This project demonstrates my proficiency in web development and data visualization.</p>
+                        <p>Through interactions with various cryptocurrency APIs, the app enables users to explore top cryptocurrencies, 
+                            visualize their price movements using interactive candlestick charts powered by Plotly, and delve into detailed information for each cryptocurrency.</p>
+                        <p>By integrating APIs, creating responsive UIs, and utilizing libraries like Plotly, Matplotlib, 
+                            and requests, this app reflects my skills in fetching real-time data, generating insightful visualizations, and building user-friendly interfaces.</p>
+                        <div class="d-flex justify-content-center mt-4">
+                            <a class="btn mx-2" href="{% url 'crypto_pulse:crypto' %}">View App</a>
+                            <a class="btn mx-2" href="https://github.com/LazyCiao/Performance-Pulse/tree/main/crypto_pulse" target="_blank">View Code</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="grid-div">
+                        <div class="heading-with-bar">
+                            <h3>News Feed</h3>
+                            <span class="white-bar"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-center mt-4">
+                            <a class="btn mx-2" href="{% url 'newsfeed:news' %}">View App</a>
+                            <a class="btn mx-2" href="#" target="_blank">View Code</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="grid-div">
+                        <div class="heading-with-bar">
+                            <h3>Content Tracker</h3>
+                            <span class="white-bar"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-center mt-4">
+                            <a class="btn mx-2" href="{% url 'content_tracker:profile_search' %}">View App</a>
+                            <a class="btn mx-2" href="#" target="_blank">View Code</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock content %}

@@ -23,11 +23,12 @@
 
     /* Add styles for the container div */
     #coin-chart-container {
-        background: rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0);
         border-radius: 16px;
         box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(13.4px);
-        -webkit-backdrop-filter: blur(13.4px);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.19);
         width: 100%;
         max-width: 1400px;
         margin-top: 40px;
@@ -117,7 +118,7 @@
                 {{ message }}
             {% endfor %}
         </div>
-    {% endif %}
+    {% else %}
 
     <div id="coin-chart-container">
         <div id="table-container">
@@ -125,7 +126,7 @@
                 <table class='bid try'>
                     <tr>
                         <th style="font-size: 10px; padding-right: 40px; text-align: center;">Price</th> 
-                        <th style="font-size: 10px; padding-right: 40px; text-align: center;">BTC</th>
+                        <th style="font-size: 10px; padding-right: 40px; text-align: center;">Quantity</th>
                         <th style="font-size: 10px; text-align: center;">Total</th> 
                     </tr>
                     {% for bid in bids %}
@@ -138,7 +139,6 @@
                             {% endif %}
                         </td>
                         <td style="padding-right: 40px; text-align: center;">{{ bid.1|floatformat:5 }}</td>
-                        <!-- Calculate the total for the current bid-->
                         <td style="text-align: center; ">{{ bid.0|floatformat:4|intcomma }}</td>
                     </tr>
                     {% endfor %}
@@ -149,7 +149,7 @@
                 <table class='ask try'>
                     <tr>
                         <th style="font-size: 10px; padding-right: 40px; text-align: center;">Price</th>
-                        <th style="font-size: 10px; padding-right: 40px; text-align: center;">BTC</th>
+                        <th style="font-size: 10px; padding-right: 40px; text-align: center;">Quantity</th>
                         <th style="font-size: 10px; text-align: center;">Total</th> 
                     </tr>
                     {% for ask in asks %}
@@ -162,7 +162,6 @@
                             {% endif %}
                         </td> 
                         <td style="padding-right: 40px; text-align: center;">{{ ask.1|floatformat:5 }}</td>
-                        <!-- Calculate the total for the current ask -->
                         <td style="text-align: center; ">{{ ask.0|floatformat:4|intcomma }}</td>
                     </tr>
                     {% endfor %}
@@ -171,8 +170,7 @@
         </div>
 
         <div id="chart-container">
-            <div id="coin-chart"> <!-- Adjust the width here (e.g., 80%) -->
-                <!-- Candlestick chart code unchanged -->
+            <div id="coin-chart"> 
             </div>
             {% if coin_info %}
                 <div class="coin-info-banner">
@@ -209,6 +207,7 @@
         const chartData = {{ chart_json|safe }};
         Plotly.react('coin-chart', chartData.data, chartData.layout);
     </script>
+    {% endif %}
 </div>
 
 {% endblock content %}
