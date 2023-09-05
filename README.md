@@ -4,6 +4,10 @@
 
 ![Crypto Market](https://i.imgur.com/kHsWJvo.png)
 
+![Crypto Market](https://i.imgur.com/emHfzAV.png)
+
+![Crypto Market](https://i.imgur.com/yhXktNn.png)
+
 ## Overview
 
 Cryptocurrency Data Visualization and Analysis is a Django web application that allows users to explore and analyze cryptocurrency data. The application provides insights into various cryptocurrencies, including real-time market data, historical price charts, order book information, and detailed descriptions.
