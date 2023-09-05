@@ -1,6 +1,6 @@
 # Cryptocurrency Data Visualization and Analysis
 
-![Equity Tracker]([link_to_your_logo_or_image.png](https://i.imgur.com/mnrz0m3.png))
+![Equity Tracker](https://i.imgur.com/mnrz0m3.png)
 
 ## Overview
 
