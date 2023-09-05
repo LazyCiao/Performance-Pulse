@@ -29,5 +29,28 @@ Cryptocurrency Data Visualization and Analysis is a Django web application that 
 ## Usage
 
 1. Clone this repository to your local environment.
-   ```shell
-   git clone https://github.com/your-username/your-repo-name.git
+
+   ``git clone https://github.com/your-username/your-repo-name.git``
+
+2. Install the required dependencies:
+
+   ``pip install -r requirements.txt``
+
+3. Run the Django development server
+
+   ``python manage.py runserver``
+   Access the application in your web browser at ``http://localhost:8000``.
+
+## Dependencies
+
+   Django: Django
+   Plotly: Plotly
+   Matplotlib: Matplotlib
+   
+## Contributing
+
+   Contributions to this project are welcome. Please follow the contribution guidelines for more information on how to get involved.
+
+## License
+
+   This project is licensed under the MIT License.
