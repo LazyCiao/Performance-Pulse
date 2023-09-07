@@ -49,9 +49,12 @@ Cryptocurrency Data Visualization and Analysis is a Django web application that 
 
 ## Dependencies
 
-   Django: Django
-   Plotly: Plotly
-   Matplotlib: Matplotlib
+   Django
+   Python
+   Plotly
+   Matplotlib
+   Pandas
+   NLP
    
 ## Contributing
 
