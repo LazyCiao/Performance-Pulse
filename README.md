@@ -58,8 +58,4 @@ Cryptocurrency Data Visualization and Analysis is a Django web application that 
    
 ## Contributing
 
-   Contributions to this project are welcome. Please follow the contribution guidelines for more information on how to get involved.
-
-## License
-
-   This project is licensed under the MIT License.
+   Contributions to this project are welcome.
