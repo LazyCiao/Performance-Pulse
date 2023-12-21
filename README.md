@@ -22,44 +22,40 @@ Performance Pulse is a Django web application designed to track and analyze fina
 ## Installation
 
 1. **Clone the Repository:**
-   
+   ```bash
    git clone https://github.com/[Your-Username]/Performance-Pulse.git
-
+   ```
 2. Navigate to the Project Directory:
-
+   ```bash
    cd Performance-Pulse
-
+   ```
 3. Create a Virtual Environment:
-
+   ```bash
    python -m venv venv
-   
+   ```
 4. Activate the Virtual Environment:
    
    On Windows:
-   
+      ```bash
       .\venv\Scripts\activate
-   
+      ```
    On MacOS/Linux:
-   
+      ```bash
       source venv/bin/activate
-   
+      ```
    Install Dependencies:
-   
+      ```bash
       pip install -r requirements.txt
-   
+      ```
 ## Usage
 
 1. Run the Django Development Server:
-   
+      ```bash
       python manage.py runserver
-   
+      ```
 3. Access the Application:
    
-   Open a web browser and navigate to http://localhost:8000/.
-   
-## Configuration
-
-   Create a .env file in the root directory with the necessary environment variables.
+   Open a web browser and navigate to ```bash http://localhost:8000/ ```.
 
 ## Contact
 
