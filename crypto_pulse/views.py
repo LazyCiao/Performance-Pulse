@@ -9,7 +9,6 @@ from .api_calls import (
     fetch_coin_details,
     fetch_order_book,
     fetch_coin_history,
-    test,
     API_COINCAP_URL,
     API_BASE_URL,
     API_BASE_URL_CHARTS,
@@ -183,25 +182,7 @@ def coin_details(request, coin_name):
 
            
     coin_details = fetch_coin_details(API_BASE_URL_DETAILS, coin_name=coin_name)
-    test_data = test()
-    
-    format_test_data = test_data['data']
-    
-    test_id = []
-    test_symbol = []
-    test_name = []
-    test_link = []
-    
-    for data in format_test_data:
-        ids = data['id']
-        symbols = data['symbol']
-        names = data['name']
-        links = data['explorer']
-        
-        test_id.append(ids)
-        test_symbol.append(symbols)
-        test_name.append(names)
-        test_link.append(links) 
+
     
     if coin_name.lower() == 'ripple':
         coin_name = 'xrp'       

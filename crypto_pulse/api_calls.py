@@ -1,6 +1,5 @@
 import requests
 
-
 # Coincap api
 API_COINCAP_URL = 'https://api.coincap.io/v2/assets/'
 # Coingecko api 
@@ -10,14 +9,8 @@ API_BASE_URL_DETAILS = 'https://api.coingecko.com/api/v3/coins/'
 API_BASE_URL_CHARTS = 'https://api.binance.com/api/v3/klines'
 API_ORDER_BOOK_URL = 'https://api.binance.com/api/v3/depth'
 
-
 order_params = {
     'limit': 15,
-}
-
-line_params = {
-    'interval': '1d',
-    'limit': 100,
 }
 
 params = {
@@ -32,7 +25,6 @@ chart_params = {
     'limit': 10,
 } 
 
-
 def fetch_coins(API_BASE_URL, params):
     response = requests.get(API_BASE_URL, params=params)
     
@@ -43,7 +35,6 @@ def fetch_coins(API_BASE_URL, params):
     else:
         return None
 
-
 def fetch_order_book(API_ORDER_BOOK_URL, coin_symbol, params=order_params):
     url = f"{API_ORDER_BOOK_URL}?symbol={coin_symbol}&limit={params['limit']}"
     
@@ -53,8 +44,7 @@ def fetch_order_book(API_ORDER_BOOK_URL, coin_symbol, params=order_params):
         orderbook_data = response.json()
         return orderbook_data
     else:
-        return None
-    
+        return None  
     
 def fetch_market_charts(API_BASE_URL_CHARTS, coin_symbol, params=chart_params):
     url = f"{API_BASE_URL_CHARTS}?symbol={coin_symbol}&interval={params['interval']}"
@@ -66,7 +56,6 @@ def fetch_market_charts(API_BASE_URL_CHARTS, coin_symbol, params=chart_params):
         return candles_data
     else:
         return None
-    
 
 def fetch_coin_details(API_BASE_URL_DETAILS, coin_name):
     coin_name = coin_name.lower()
@@ -74,45 +63,21 @@ def fetch_coin_details(API_BASE_URL_DETAILS, coin_name):
     url = f'{API_BASE_URL_DETAILS}{coin_name}'
     
     response = requests.get(url)
-    print('----------------------')
-    print(response)
-    print(response.url)
-    print('----------------------')
+
     if response.status_code == 200:
         coin_details = response.json()
         return coin_details
     else:
-        return None
-    
+        return None  
     
 def fetch_coin_history(API_COINCAP_URL, coin_name):
     coin_name = coin_name.lower()
     url = f'{API_COINCAP_URL}{coin_name}/history?interval=d1'
     response = requests.get(url)
-    print('----------------------')
-    print(response)
-    print(response.url)
-    print('----------------------')
+
     if response.status_code == 200:
         top_30 = response.json()
         
         return top_30
-    else:
-        return None
-    
-
-def test():
-    url = API_COINCAP_URL
-    
-    response = requests.get(url)
-    # print('----------------------')
-    # print(response)
-    # print(response.url)
-    # print('----------------------')
-    if response.status_code == 200:
-        test = response.json()
-        
-        return test
-    
     else:
         return None
