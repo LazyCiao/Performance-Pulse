@@ -1,0 +1,151 @@
+{% extends 'performance_pulse/base.html' %}
+
+{% block title %}Equity Tracker | Performance Pulse{% endblock title %}
+
+{% block content %}
+<style>
+    body {
+        overflow-y: hidden; 
+    }
+    
+    .chart-container {
+        position: relative;
+        padding-bottom: 75%; 
+        width: 100%;
+    }
+    
+    .chart-img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .content {
+        margin-top: 56px; 
+    }
+
+    .col-md-6 {
+        padding: 8px;
+    }
+
+    .news-card {
+        color: #fff; 
+        text-align: center; 
+        background: rgba(255, 255, 255, 0);
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.19);
+    }
+
+    .news-item a {
+        color: #fff;
+        text-decoration: none;
+        transition: color 0.3s ease; 
+    }
+
+    .news-item a:hover {
+        color: #FF6347; 
+    }
+
+    .news-item a:active {
+        color: #D40B00; 
+    }
+
+    .news-item a,
+    .news-item a:hover,
+    .news-item a:active {
+        text-decoration: none;
+    }
+
+    .read-more {
+        font-size: 10px;
+        color: #fff;
+    }
+
+    .read-more:hover {
+        color: #FF6347;
+    }
+
+    .read-more:active {
+        color: #D40B00;
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0);
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.19);
+    }
+    @media (max-width: 1024px) {
+        body {
+            overflow-y: auto; /* Change to auto on mobile and iPad-type devices */
+        }
+</style>
+
+
+<!-- Chart Cards -->
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="chart-container">
+                        <img src="data:image/png;base64,{{ company_data.line_chart_image_base64 }}" alt="Line Chart" class="chart-img">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="chart-container">
+                        <img src="data:image/png;base64,{{ company_data.area_chart_image_base64 }}" alt="Bar Chart" class="chart-img">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="chart-container">
+                        <img src="data:image/png;base64,{{ company_data.bar_chart_image_base64 }}" alt="Bar Chart" class="chart-img">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card news-card">
+                <div class="card-body">
+                    <!-- Display the company name -->
+                    <h4><div class="company-name" style="font-size: 24px;">{{ company_data.name }}</div></h4>
+                    
+                    <!-- Display the company description in a smaller font size -->
+                    <div class="company-description" style="font-size: 14px; padding-bottom: 10px;">{{ company_data.description }}</div>
+                    
+                    <h4 class="mb-4" style="font-size: 24px;">Latest News</h4>
+                    
+                    <!-- Loop through the news items and display each title with a smaller font size -->
+                    {% for title, link in company_data.news_items %}
+                    <div class="news-item">
+                        <div style="font-size: 16px;">
+                            <a href="{{ link }}" target="_blank">{{ title }}</a>
+                        </div>
+                        <p style="font-size: 10px"><a href="{{ link }}" target="_blank">Read more</a></p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div> 
+    </div>
+</div>
+</body>
+{% endblock %}

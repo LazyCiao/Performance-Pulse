@@ -1,0 +1,227 @@
+{% extends 'performance_pulse/base.html' %}
+
+{% block title %}Crypto Market| Performance Pulse{% endblock title %}
+{% load custom_filters humanize %}
+
+{% block content %}
+
+<style>
+    div.center-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    table.crypto-table {
+        width: 100%;
+        background: rgba(0, 0, 0, 0);
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(13.4px);
+        -webkit-backdrop-filter: blur(13.4px);
+        transition: background-color 0.3s ease;
+        color: white;
+        width: 800px;
+    }
+
+    table.crypto-table tr:hover {
+        background-color: rgba(255, 255, 255, 0.1); 
+    }
+
+    th,
+    td {
+        padding: 10px;
+        text-align: center;
+    }
+
+    th {
+        background-color: rgba(0, 0, 0, 0.8);
+        border-radius: 16px 16px 0 0;
+    }
+
+    td {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    tr.clickable-row {
+        cursor: pointer;
+    }
+
+    div.crypto-container {
+        max-width: 800px; 
+        margin: 0 auto; 
+    }
+
+    .small-symbol {
+        font-size: 80%;
+    }
+
+    .red {
+        color: red;
+    }
+
+    .green {
+        color: green;
+    }
+
+    .coin-logo {
+        height: 30px; 
+        width: auto; 
+        margin-right: 8px; 
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 16px;
+    }
+    
+    .pagination-link {
+        text-decoration: none;
+        background: rgba(0, 0, 0, 0);
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0);
+        backdrop-filter: blur(13.4px);
+        -webkit-backdrop-filter: blur(13.4px);
+        color: white;
+        padding: 8px 12px; 
+        margin: 0 4px; 
+        cursor: pointer;
+        transition: background-color 0.3s ease; 
+    }
+    
+    .pagination-link:hover {
+        text-decoration: none;
+        color: white; 
+        background-color: rgba(0, 0, 0, 0.9);     
+    }
+
+    .pagination .active {
+        background-color: rgba(0, 0, 0, 0.8); 
+        text-decoration: none; 
+        color: white; 
+    }
+</style>
+
+<div class='center-container'>
+    <div class="crypto-container">
+        {% if messages %}
+            <div class="alert alert-danger" role="alert">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% else %}
+        
+            <table class="crypto-table">
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Change (24h)</th>
+                    <th>Volume (24h)</th>
+                    <th>Market Cap</th>
+                </tr>
+
+                {% for coin in coins %}
+                    <tr class="clickable-row" data-href="{% url 'crypto_pulse:coin_chart' coin.symbol %}">
+                        <td>
+                            <div style="display: flex; align-items: center;">
+                                <img src="{{ coin.image }}" alt="{{ coin.name }} Logo" class="coin-logo">
+                                <span>{{ coin.name }}</span>
+                            </div>
+                        </td>
+                        <td>${{ coin.current_price|floatformat:2 }}</td>
+                        <td class="{% if coin.daily_price_change < 0 %}red{% else %}green{% endif %}">
+                            {{ coin.daily_price_change|floatformat:2 }}%
+                        </td>
+                        <td>${{ coin.daily_volume|intcomma|shorten_market_cap }}</td>
+                        <td>${{ coin.market_cap|intcomma|shorten_market_cap }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+            
+            {% if page_obj.has_previous or page_obj.has_next %}
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                <a class='pagination-link' href="?page=1">&lt;&lt;</a>
+                <a class='pagination-link' href="?page={{ page_obj.previous_page_number }}">&lt;</a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <a class="active pagination-link" href="?page={{ num }}">{{ num }}</a>
+                {% else %}
+                <a class='pagination-link' href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <a class='pagination-link' href="?page={{ page_obj.next_page_number }}">&gt;</a>
+                <a class='pagination-link' href="?page={{ page_obj.paginator.num_pages }}">&gt;&gt;</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Add click event listener to each clickable row
+    document.addEventListener('DOMContentLoaded', () => {
+        const clickableRows = document.querySelectorAll('.clickable-row');
+        clickableRows.forEach(row => {
+            row.addEventListener('click', () => {
+                const href = row.dataset.href;
+                const coinSymbol = row.dataset.coinSymbol; // Get the coin symbol from the data attribute
+                const coinName = row.dataset.coinName; // Get the coin name from the data attribute
+
+                // Make an HTTP request to the server to save the coin symbol and name
+                fetch('/save_coin_data/', {
+                    method: 'POST', // Use the appropriate HTTP method (e.g., POST or GET)
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}', // Include the CSRF token
+                    },
+                    body: JSON.stringify({ coin_symbol: coinSymbol, coin_name: coinName }), // Send the coin symbol and name in the request body
+                })
+                .then(response => {
+                    // Handle the response if needed
+                    window.location.href = href; // Redirect to the coin_chart page after saving the coin symbol and name
+                })
+                .catch(error => {
+                    // Handle errors if any
+                });
+            });
+        });
+
+        // Add click event listener to each "Details" link
+        const detailsLinks = document.querySelectorAll('.btn-details');
+        detailsLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent the default behavior of the "Details" link
+
+                const href = link.getAttribute('href');
+                const coinName = link.dataset.coinName;
+
+                // Make an HTTP request to the server to save the coin name
+                fetch('/save_coin_data/', {
+                    method: 'POST', // Use the appropriate HTTP method (e.g., POST or GET)
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}', // Include the CSRF token
+                    },
+                    body: JSON.stringify({ coin_name: coinName }), // Send the coin name in the request body
+                })
+                .then(response => {
+                    // Handle the response if needed
+                    window.location.href = href; // Redirect to the coin_details page after saving the coin name
+                })
+                .catch(error => {
+                    // Handle errors if any
+                });
+            });
+        });
+    });
+</script>
+{% endblock content %}
