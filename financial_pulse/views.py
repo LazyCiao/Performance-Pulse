@@ -197,7 +197,7 @@ def search_company(request):
                     # Plot info and style
                     plt.style.use('_mpl-gallery')
                     plt.xlabel(' ', color='white', fontsize=17)  # Increase font size to 12
-                    plt.ylabel('Amount (USD)', color='white', fontsize=17)  # Increase font size to 12
+                    plt.ylabel('Amount (USD) ', color='white', fontsize=17)  # Increase font size to 12
                     plt.title(f'{company_name} Financial Metrics over Time', color='white', fontsize=17)  # Increase font size to 16
                     plt.tight_layout()
                     
