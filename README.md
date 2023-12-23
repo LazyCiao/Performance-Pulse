@@ -8,45 +8,59 @@
 
 ![Crypto Market](https://i.imgur.com/yhXktNn.png)
 
-## Overview
+# Performance Pulse
 
-Cryptocurrency Data Visualization and Analysis is a Django web application that allows users to explore and analyze cryptocurrency data. The application provides insights into various cryptocurrencies, including real-time market data, historical price charts, order book information, and detailed descriptions.
+## Description
+
+Performance Pulse is a Django web application designed to track and analyze financial and cryptocurrency markets. The application features modules for equity tracking (`financial_pulse`) and crypto market analysis (`crypto_pulse`), offering insights through various data visualizations and market summaries.
 
 ## Features
 
-- **Cryptocurrency Listing:** View a list of cryptocurrencies with essential information, including name, symbol, market capitalization, daily price change, daily trading volume, and current price.
+- **Equity Tracker (`financial_pulse`):** Provides detailed financial data for companies, including income statements, balance sheets, and news sentiment analysis.
+- **Crypto Market (`crypto_pulse`):** Offers cryptocurrency market data, including price charts, trading volumes, and detailed coin information.
 
-- **Pagination:** Navigate through multiple pages of cryptocurrency data, with ten cryptocurrencies displayed per page.
+## Installation
 
-- **Interactive Candlestick Charts:** Explore historical price data for specific cryptocurrencies using interactive candlestick charts generated with Plotly. These charts display open, high, low, and close prices over a specified time frame (e.g., the last 3 months).
-
-- **Order Book Information:** Access real-time order book data for selected cryptocurrencies, showing bid and ask orders.
-
-- **Detailed Cryptocurrency Information:** Retrieve in-depth details about individual cryptocurrencies, including descriptions, names, symbols, and historical price charts generated with Matplotlib.
-
-- **External APIs:** Utilize external cryptocurrency APIs to fetch up-to-date market data, coin details, order book data, and historical price information.
-
-- **Error Handling:** Handle API request errors gracefully, providing users with informative error messages when data cannot be fetched or rate limits are reached.
-
-- **Data Formatting:** Ensure consistency in API requests by formatting cryptocurrency names and symbols as needed for external data sources.
-
-- **Session Management:** Store cryptocurrency data temporarily in user sessions, allowing seamless navigation between pages and eliminating redundant API calls.
-
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/[Your-Username]/Performance-Pulse.git
+   ```
+2. Navigate to the Project Directory:
+   ```bash
+   cd Performance-Pulse
+   ```
+3. Create a Virtual Environment:
+   ```bash
+   python -m venv venv
+   ```
+4. Activate the Virtual Environment:
+   
+   On Windows:
+      ```bash
+      .\venv\Scripts\activate
+      ```
+   On MacOS/Linux:
+      ```bash
+      source venv/bin/activate
+      ```
+   Install Dependencies:
+      ```bash
+      pip install -r requirements.txt
+      ```
 ## Usage
 
-1. Clone this repository to your local environment.
+1. Run the Django Development Server:
+      ```bash
+      python manage.py runserver
+      ```
+3. Access the Application:
+   
+   Open a web browser and navigate to ```bash http://localhost:8000/ ```.
 
-   ``git clone https://github.com/your-username/your-repo-name.git``
+## Contact
 
-2. Install the required dependencies:
-
-   ``pip install -r requirements.txt``
-
-3. Run the Django development server
-
-   ``python manage.py runserver``
-   Access the application in your web browser at ``http://localhost:8000``.
-
+   Email: logan.scott1234@gmail.com
+   
 ## Dependencies
 
    Django
@@ -54,7 +68,9 @@ Cryptocurrency Data Visualization and Analysis is a Django web application that 
    Plotly
    Matplotlib
    Pandas
+   Numpy
    NLP
+   nltk
    
 ## Contributing
 
