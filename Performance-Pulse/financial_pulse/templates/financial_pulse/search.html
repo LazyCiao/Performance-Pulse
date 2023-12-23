@@ -1,0 +1,32 @@
+{% extends 'financial_pulse/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Company Search | Performance Pulse{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        {% if messages %}
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-6">
+                    {% for message in messages %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+        
+        <div class="row justify-content-center align-items-center" style="height: 100vh;">
+            <div class="col-md-6">
+                <form method="POST" action="{% url 'search' %}" class="crispy-form">
+                    {% csrf_token %}
+                    <div class="text-center">
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
