@@ -82,7 +82,7 @@
         box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.19);
+        border: 1px solid rgba(255, 255, 255, 0.05);
     }
     @media (max-width: 1024px) {
         body {
@@ -130,7 +130,9 @@
                     
                     <!-- Display the company description in a smaller font size -->
                     <div class="company-description" style="font-size: 14px; padding-bottom: 10px;">{{ company_data.description }}</div>
-                    
+
+                    <br>
+
                     <h4 class="mb-4" style="font-size: 24px;">Latest News</h4>
                     
                     <!-- Loop through the news items and display each title with a smaller font size -->

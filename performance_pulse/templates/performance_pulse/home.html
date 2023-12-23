@@ -10,13 +10,12 @@
 
     .grid-div {
         color: white;
-
         background: rgba(255, 255, 255, 0);
         border-radius: 16px;
         box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.19);
+        border: 1px solid rgba(255, 255, 255, 0.05);
         text-align: center;
         padding: 20px;
         margin: 10px;
@@ -72,9 +71,16 @@
         bottom: 0;
         left: 0;
     }
+
+    /* Responsive margin-top for smaller screens */
+    @media (max-width: 768px) {
+        .container-one {
+            margin-top: 150px; /* Adjust this value based on your navbar's height */
+        }
+    }
 </style>
 <body>
-    <div class="container">
+    <div class="container container-one">
         <div class="d-flex justify-content-center align-items-center vh-100">
             <div class="row">
                 <div class="col-md-6">

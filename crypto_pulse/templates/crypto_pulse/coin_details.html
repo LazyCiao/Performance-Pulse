@@ -18,11 +18,18 @@
         padding: 30px;
         color: white; 
     }
+
+    /* Responsive margin-top for smaller screens */
+    @media (max-width: 768px) {
+        .container-one {
+            margin-top: 60px; /* Adjust this value based on your navbar's height */
+        }
+    }
 </style>
 
 <body> 
-    <div class="container d-flex justify-content-center align-items-center min-vh-100">
-        <div class="styled-div">
+    <div class="container container-one d-flex justify-content-center align-items-center min-vh-100">
+        <div class="col-12 col-lg-12 col-xl-10 styled-div">
             {% if messages %}
                 <div class="alert alert-danger" role="alert">
                     {% for message in messages %}
@@ -38,9 +45,8 @@
                 <p class='description'>{{ description }}</p>
             {% endif %}
 
-            <!-- Display the line chart -->
             {% if line_chart %}
-                <img src="data:image/png;base64,{{ line_chart }}" alt="Line Chart">
+                <img src="data:image/png;base64,{{ line_chart }}" alt="Line Chart" class="img-fluid">
             {% endif %}
         </div>
     </div>
